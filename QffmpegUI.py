@@ -39,6 +39,7 @@ class GForm(QMainWindow, Ui_winMain):
         currentItem = self.lstFileList.takeItem(currentRow)
         r = max(currentRow-1, 0)
         self.lstFileList.insertItem(r, currentItem)
+        self.lstFileList.setCurrentRow(r)
 
     def delete_file(self):
         currentRow = self.lstFileList.currentRow()
