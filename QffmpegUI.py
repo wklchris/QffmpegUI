@@ -1,10 +1,16 @@
-import sys
+from subprocess import Popen, PIPE, STDOUT, check_output
 from PyQt5 import QtCore, QtWidgets
+from PyQt5.QtGui import QTextCursor
 from PyQt5.QtWidgets import QApplication, QMainWindow, QFileDialog, QListWidgetItem
 from Ui_QffmpegUI import Ui_winMain
 
 # High DPI support
 QtWidgets.QApplication.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling, True)
+
+# class StrFlow(QtCore.QObject):
+#     textFlowSignal = QtCore.pyqtSignal(str)
+#     def write(self, text):
+#         self.textFlowSignal.emit(str(text))
 
 class GForm(QMainWindow, Ui_winMain):
     def __init__(self):
@@ -15,6 +21,8 @@ class GForm(QMainWindow, Ui_winMain):
         self.btnClearList.clicked.connect(self.clear_filelist)
         self.btnMoveUpFile.clicked.connect(self.move_up_file)
         self.btnDeleteFile.clicked.connect(self.delete_file)
+        # Capture the command line output
+        self.btnAdvanceRun.clicked.connect(self.run_advance_cmd)
     
     # --- File Tab ---
     def file_browser(self):
@@ -52,8 +60,22 @@ class GForm(QMainWindow, Ui_winMain):
     def clear_filelist(self):
         self.lstFileList.clear()
 
+    # --- Advance Tab ---
+    def run_advance_cmd(self):
+        advanceCmd = self.tbxAdvanceCmd.toPlainText()
+        try:
+            pipe = Popen(advanceCmd, encoding='utf-8', stdout=PIPE, stderr=PIPE)
+            stdout, stderr = pipe.communicate()
+            streamText = f"{stderr}\n---\nError" if stderr else f"{stdout}\n---\nPass"
+            self.txeAdvanceOutput.setPlainText(streamText)
+        except Exception as e:
+            self.txeAdvanceOutput.setPlainText(f"{e}\n---\nException thrown")
+        ## Move the view to the bottom
+        self.txeAdvanceOutput.moveCursor(QTextCursor.End)
+
 
 if __name__ == '__main__':
+    import sys
     app = QApplication(sys.argv)
     w = GForm()
     w.show()

@@ -57,7 +57,7 @@
      </sizepolicy>
     </property>
     <property name="currentIndex">
-     <number>0</number>
+     <number>1</number>
     </property>
     <widget class="QWidget" name="tabFile">
      <attribute name="title">
@@ -143,12 +143,64 @@
      <attribute name="title">
       <string>Advance</string>
      </attribute>
+     <widget class="QPlainTextEdit" name="tbxAdvanceCmd">
+      <property name="geometry">
+       <rect>
+        <x>8</x>
+        <y>20</y>
+        <width>370</width>
+        <height>30</height>
+       </rect>
+      </property>
+      <property name="plainText">
+       <string>ffmpeg -version</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="lblAdvanceCmd">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>5</y>
+        <width>81</width>
+        <height>14</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Advance Command</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="btnAdvanceRun">
+      <property name="geometry">
+       <rect>
+        <x>320</x>
+        <y>3</y>
+        <width>56</width>
+        <height>14</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Run</string>
+      </property>
+     </widget>
+     <widget class="QTextEdit" name="txeAdvanceOutput">
+      <property name="geometry">
+       <rect>
+        <x>8</x>
+        <y>53</y>
+        <width>370</width>
+        <height>90</height>
+       </rect>
+      </property>
+      <property name="readOnly">
+       <bool>true</bool>
+      </property>
+     </widget>
     </widget>
     <widget class="QWidget" name="tabAbout">
      <attribute name="title">
       <string>About</string>
      </attribute>
-     <widget class="QTextBrowser" name="textBrowser">
+     <widget class="QTextBrowser" name="tbrAbout">
       <property name="geometry">
        <rect>
         <x>10</x>
