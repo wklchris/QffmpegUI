@@ -7,11 +7,6 @@ from Ui_QffmpegUI import Ui_winMain
 # High DPI support
 QtWidgets.QApplication.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling, True)
 
-# class StrFlow(QtCore.QObject):
-#     textFlowSignal = QtCore.pyqtSignal(str)
-#     def write(self, text):
-#         self.textFlowSignal.emit(str(text))
-
 class GForm(QMainWindow, Ui_winMain):
     def __init__(self):
         super(GForm, self).__init__()
@@ -23,7 +18,10 @@ class GForm(QMainWindow, Ui_winMain):
         self.btnDeleteFile.clicked.connect(self.delete_file)
         # Capture the command line output
         self.btnAdvanceRun.clicked.connect(self.run_advance_cmd)
-    
+        self.run_advance_cmd()  # Initial check for ffmpeg
+        # Always start at the first tab
+        self.tabWidget.setCurrentIndex(0)
+
     # --- File Tab ---
     def file_browser(self):
         options = QFileDialog.Options()
@@ -63,15 +61,18 @@ class GForm(QMainWindow, Ui_winMain):
     # --- Advance Tab ---
     def run_advance_cmd(self):
         advanceCmd = self.tbxAdvanceCmd.toPlainText()
-        try:
-            pipe = Popen(advanceCmd, encoding='utf-8', stdout=PIPE, stderr=PIPE)
-            stdout, stderr = pipe.communicate()
-            streamText = f"{stderr}\n---\nError" if stderr else f"{stdout}\n---\nPass"
-            self.txeAdvanceOutput.setPlainText(streamText)
-        except Exception as e:
-            self.txeAdvanceOutput.setPlainText(f"{e}\n---\nException thrown")
+        self.txeAdvanceOutput.setPlainText(self.cmd_output(advanceCmd))
         ## Move the view to the bottom
         self.txeAdvanceOutput.moveCursor(QTextCursor.End)
+    
+    def cmd_output(self, cmdline):
+        try:
+            pipe = Popen(cmdline, encoding='utf-8', stdout=PIPE, stderr=PIPE)
+            stdout, stderr = pipe.communicate()
+            streamText = f"{stderr}\n---\nError" if stderr else f"{stdout}\n---\nPass"
+        except Exception as e:
+            streamText = f"{e}\n---\nException thrown"
+        return streamText
 
 
 if __name__ == '__main__':
