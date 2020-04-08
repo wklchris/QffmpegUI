@@ -11,6 +11,10 @@ class GForm(QMainWindow, Ui_winMain):
     def __init__(self):
         super(GForm, self).__init__()
         self.setupUi(self)
+        # Init variables
+        self.qFileList, self.qOutFileList = [], []
+        self.qAudioOptions = None
+        self.qContainerType = "MP3"
         # Set the file browser button
         self.btnFileBrowser.clicked.connect(self.file_browser)
         self.btnClearList.clicked.connect(self.clear_filelist)
@@ -25,6 +29,8 @@ class GForm(QMainWindow, Ui_winMain):
             "winMain", "ffmpeg -version"))
         self.btnAdvanceRun.clicked.connect(self.run_advance_cmd)
         self.run_advance_cmd()  # Initial check for ffmpeg
+        ## Enable clickable web links
+        self.tbrAbout.setOpenExternalLinks(True)
 
         # Always start at the first tab
         self.tabWidget.setCurrentIndex(0)
@@ -39,6 +45,7 @@ class GForm(QMainWindow, Ui_winMain):
         if fnames:
             for fp in fnames:
                 self.lstFileList.addItem(QListWidgetItem(f"{fp}"))
+        self.qFileList = fnames  # Store the file list
         self.update_filenum()
 
     def update_filenum(self):
@@ -56,6 +63,7 @@ class GForm(QMainWindow, Ui_winMain):
 
     def delete_file(self):
         currentRow = self.lstFileList.currentRow()
+        del(self.qFileList[currentRow])
         self.lstFileList.takeItem(currentRow)
 
         n = self.update_filenum()
@@ -81,9 +89,27 @@ class GForm(QMainWindow, Ui_winMain):
             streamText = f"{e}\n---\nException thrown"
         return streamText
     
+    def join_cmd(self, infname):
+        cmd_list = [
+            "ffmpeg -y",  # Always overwrite
+            "-hide_banner",  # Hide info banner
+            f'-i "{infname}"',
+            self.qAudioOptions,
+            f'"{self.generate_output_fname(infname)}"'
+        ]
+        cmd_each_loop = ' '.join([x for x in cmd_list if x])
+        return cmd_each_loop
+
     def update_final_cmd(self):
-        self.qWorkFlowCmd = f"ffmpeg {self.qAudiOptions}"
-        self.tbxAdvanceCmd.setPlainText(self.qWorkFlowCmd)
+        # Jump to the Advance tab only when there's one file
+        if len(self.qFileList) == 1:
+            infname = self.qFileList[0]
+            self.qWorkFlowCmd = self.join_cmd(infname)
+            self.tbxAdvanceCmd.setPlainText(self.qWorkFlowCmd)
+            self.tabWidget.setCurrentWidget(self.tabWidget.findChild(
+                QtWidgets.QWidget, "tabAdvance"))
+        # else:
+        #     for infname in self.qFileList:
 
 
     # --- Audio Tab ---
@@ -101,22 +127,32 @@ class GForm(QMainWindow, Ui_winMain):
     
     def generate_audio_options(self):
         if self.ckbxNoAudio.isChecked():
-            return "-an"
-        ops = {k: None for k in ["-c:a", "-b:a"]}
-        ## If an audio codec is selected
-        if 'Auto' not in self.cbbxAudioCodec.currentText():
-            ops["-c:a"] = self.cbbxAudioCodec.currentText()
-        ## If the audio bitrate is specified (in Kbps)
-        if self.spbxAudioBitRate.isEnabled():
-            ops["-b:a"] = self.spbxAudioBitRate.value() + 'k'
-        audioOpsLst = [f"{k} {v}" for k, v in ops.items() if v]
-        
-        return ' '.join(audioOpsLst)
+            self.qAudioOptions = "-an"
+        else:
+            ops = {k: None for k in ["-c:a", "-b:a"]}
+            ## If an audio codec is selected
+            if 'Auto' not in self.cbbxAudioCodec.currentText():
+                ops["-c:a"] = self.cbbxAudioCodec.currentText()
+            ## If the audio bitrate is specified (in Kbps)
+            if self.spbxAudioBitRate.isEnabled():
+                ops["-b:a"] = "{}k".format(self.spbxAudioBitRate.value())
+            audioOpsLst = [f"{k} {v}" for k, v in ops.items() if v]
+            self.qAudioOptions = ' '.join(audioOpsLst)
 
     def run_audio_tab(self):
-        self.qAudiOptions = self.generate_audio_options()
+        self.generate_audio_options()
         self.update_final_cmd()
+    
+    # --- Work Flow tab ---
+    def generate_output_fname(self, infullpath):
+        fname = infullpath.split('/')[-1]
+        fdir = infullpath[:-(len(fname)+1)]
+        fext = fname.split('.')[-1]
+        fshortname = fname[:-(len(fext)+1)]
+        foutext = self.qContainerType.lower()
         
+        outfullpath = f'{fdir}/{fshortname}.{foutext}'
+        return outfullpath
 
 if __name__ == '__main__':
     import sys
