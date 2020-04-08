@@ -57,7 +57,7 @@
      </sizepolicy>
     </property>
     <property name="currentIndex">
-     <number>1</number>
+     <number>0</number>
     </property>
     <widget class="QWidget" name="tabFile">
      <attribute name="title">
@@ -136,6 +136,191 @@
       </property>
       <property name="text">
        <string>Remove</string>
+      </property>
+     </widget>
+    </widget>
+    <widget class="QWidget" name="tabAudio">
+     <attribute name="title">
+      <string>Audio</string>
+     </attribute>
+     <widget class="QCheckBox" name="ckbxNoAudio">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>5</y>
+        <width>53</width>
+        <height>14</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>No Audio</string>
+      </property>
+     </widget>
+     <widget class="QGroupBox" name="gbxAudioConfig">
+      <property name="enabled">
+       <bool>true</bool>
+      </property>
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>25</y>
+        <width>191</width>
+        <height>120</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <weight>50</weight>
+        <bold>false</bold>
+       </font>
+      </property>
+      <property name="title">
+       <string>Audio Config</string>
+      </property>
+      <widget class="QLabel" name="lblAudioCodec">
+       <property name="geometry">
+        <rect>
+         <x>20</x>
+         <y>40</y>
+         <width>64</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Audio Codec:</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="lblAudioType">
+       <property name="geometry">
+        <rect>
+         <x>20</x>
+         <y>20</y>
+         <width>50</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Audio Type:</string>
+       </property>
+      </widget>
+      <widget class="QComboBox" name="cbbxAudioType">
+       <property name="geometry">
+        <rect>
+         <x>80</x>
+         <y>20</y>
+         <width>100</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <item>
+        <property name="text">
+         <string>MP3</string>
+        </property>
+       </item>
+      </widget>
+      <widget class="QLabel" name="lblAudioBitRate">
+       <property name="geometry">
+        <rect>
+         <x>20</x>
+         <y>60</y>
+         <width>41</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Bit rate:</string>
+       </property>
+      </widget>
+      <widget class="QComboBox" name="cbbxAudioCodec">
+       <property name="geometry">
+        <rect>
+         <x>80</x>
+         <y>40</y>
+         <width>100</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <item>
+        <property name="text">
+         <string>(Auto)</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>libmp3lame</string>
+        </property>
+       </item>
+      </widget>
+      <widget class="QSpinBox" name="spbxAudioBitRate">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+       <property name="geometry">
+        <rect>
+         <x>90</x>
+         <y>94</y>
+         <width>50</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="value">
+        <number>0</number>
+       </property>
+      </widget>
+      <widget class="QLabel" name="lblAudioKbps">
+       <property name="geometry">
+        <rect>
+         <x>150</x>
+         <y>96</y>
+         <width>30</width>
+         <height>10</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Kbps</string>
+       </property>
+      </widget>
+      <widget class="QRadioButton" name="rbtnBitRateAuto">
+       <property name="geometry">
+        <rect>
+         <x>30</x>
+         <y>77</y>
+         <width>100</width>
+         <height>14</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Default / Auto Bit Rate</string>
+       </property>
+       <property name="checked">
+        <bool>true</bool>
+       </property>
+      </widget>
+      <widget class="QRadioButton" name="rbtnBitRateManual">
+       <property name="geometry">
+        <rect>
+         <x>30</x>
+         <y>95</y>
+         <width>62</width>
+         <height>14</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Manual</string>
+       </property>
+      </widget>
+     </widget>
+     <widget class="QPushButton" name="btnAudioRun">
+      <property name="geometry">
+       <rect>
+        <x>320</x>
+        <y>3</y>
+        <width>56</width>
+        <height>17</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Run</string>
       </property>
      </widget>
     </widget>

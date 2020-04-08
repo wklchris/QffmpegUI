@@ -1,4 +1,4 @@
-from subprocess import Popen, PIPE, STDOUT, check_output
+from subprocess import Popen, PIPE
 from PyQt5 import QtCore, QtWidgets
 from PyQt5.QtGui import QTextCursor
 from PyQt5.QtWidgets import QApplication, QMainWindow, QFileDialog, QListWidgetItem
@@ -16,9 +16,16 @@ class GForm(QMainWindow, Ui_winMain):
         self.btnClearList.clicked.connect(self.clear_filelist)
         self.btnMoveUpFile.clicked.connect(self.move_up_file)
         self.btnDeleteFile.clicked.connect(self.delete_file)
+        # Set the audio panel buttons
+        self.ckbxNoAudio.stateChanged.connect(self.no_audio)
+        self.rbtnBitRateManual.toggled.connect(self.manual_audio_bitrate)
+        self.btnAudioRun.clicked.connect(self.run_audio_tab)
         # Capture the command line output
+        self.tbxAdvanceCmd.setPlainText(QtCore.QCoreApplication.translate(
+            "winMain", "ffmpeg -version"))
         self.btnAdvanceRun.clicked.connect(self.run_advance_cmd)
         self.run_advance_cmd()  # Initial check for ffmpeg
+
         # Always start at the first tab
         self.tabWidget.setCurrentIndex(0)
 
@@ -73,7 +80,43 @@ class GForm(QMainWindow, Ui_winMain):
         except Exception as e:
             streamText = f"{e}\n---\nException thrown"
         return streamText
+    
+    def update_final_cmd(self):
+        self.qWorkFlowCmd = f"ffmpeg {self.qAudiOptions}"
+        self.tbxAdvanceCmd.setPlainText(self.qWorkFlowCmd)
 
+
+    # --- Audio Tab ---
+    def no_audio(self):
+        if self.ckbxNoAudio.isChecked():
+            self.gbxAudioConfig.setEnabled(False)
+        else:
+            self.gbxAudioConfig.setEnabled(True)
+
+    def manual_audio_bitrate(self):
+        if self.rbtnBitRateManual.isChecked():
+            self.spbxAudioBitRate.setEnabled(True)
+        else:
+            self.spbxAudioBitRate.setEnabled(False)
+    
+    def generate_audio_options(self):
+        if self.ckbxNoAudio.isChecked():
+            return "-an"
+        ops = {k: None for k in ["-c:a", "-b:a"]}
+        ## If an audio codec is selected
+        if 'Auto' not in self.cbbxAudioCodec.currentText():
+            ops["-c:a"] = self.cbbxAudioCodec.currentText()
+        ## If the audio bitrate is specified (in Kbps)
+        if self.spbxAudioBitRate.isEnabled():
+            ops["-b:a"] = self.spbxAudioBitRate.value() + 'k'
+        audioOpsLst = [f"{k} {v}" for k, v in ops.items() if v]
+        
+        return ' '.join(audioOpsLst)
+
+    def run_audio_tab(self):
+        self.qAudiOptions = self.generate_audio_options()
+        self.update_final_cmd()
+        
 
 if __name__ == '__main__':
     import sys
